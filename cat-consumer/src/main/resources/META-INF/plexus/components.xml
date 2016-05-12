@@ -1,181 +1,93 @@
 <plexus>
 	<components>
 		<component>
-			<role>org.unidal.cat.report.ReportConfiguration</role>
-			<implementation>org.unidal.cat.report.internals.DefaultReportConfiguration</implementation>
-		</component>
-		<component>
-			<role>org.unidal.cat.report.ReportManagerManager</role>
-			<implementation>org.unidal.cat.report.internals.DefaultReportManagerManager</implementation>
-		</component>
-		<component>
-			<role>org.unidal.cat.report.ReportFilterManager</role>
-			<implementation>org.unidal.cat.report.internals.DefaultReportFilterManager</implementation>
-		</component>
-		<component>
-			<role>org.unidal.cat.report.spi.ReportDelegateManager</role>
-			<implementation>org.unidal.cat.report.spi.internals.DefaultReportDelegateManager</implementation>
-		</component>
-		<component>
-			<role>org.unidal.cat.report.spi.remote.RemoteStub</role>
-			<implementation>org.unidal.cat.report.spi.internals.DefaultRemoteStub</implementation>
+			<role>org.unidal.cat.spi.analysis.pipeline.Pipeline</role>
+			<role-hint>transaction</role-hint>
+			<implementation>org.unidal.cat.plugin.transaction.TransactionPipeline</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
 			<requirements>
 				<requirement>
-					<role>org.unidal.cat.report.ReportConfiguration</role>
+					<role>org.unidal.cat.spi.analysis.MessageRoutingStrategy</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.cat.spi.ReportConfiguration</role>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.spi.remote.RemoteSkeleton</role>
-			<implementation>org.unidal.cat.report.spi.internals.DefaultRemoteSkeleton</implementation>
+			<role>org.unidal.cat.spi.analysis.pipeline.Pipeline</role>
+			<role-hint>event</role-hint>
+			<implementation>org.unidal.cat.plugin.event.EventPipeline</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
 			<requirements>
 				<requirement>
-					<role>org.unidal.cat.report.ReportManagerManager</role>
+					<role>org.unidal.cat.spi.analysis.MessageRoutingStrategy</role>
+				</requirement>
+				<requirement>
+					<role>org.unidal.cat.spi.ReportConfiguration</role>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.internals.ReportProvider</role>
-			<implementation>org.unidal.cat.report.internals.DefaultReportProvider</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.cat.report.internals.ReportProvider</role>
-					<role-hint>recent</role-hint>
-					<field-name>m_rencent</field-name>
-				</requirement>
-				<requirement>
-					<role>org.unidal.cat.report.internals.ReportProvider</role>
-					<role-hint>historical</role-hint>
-					<field-name>m_historical</field-name>
-				</requirement>
-			</requirements>
+			<role>org.unidal.cat.spi.analysis.MessageRoutingStrategy</role>
+			<implementation>org.unidal.cat.plugin.routing.DomainHashStrategy</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.internals.ReportProvider</role>
-			<role-hint>recent</role-hint>
-			<implementation>org.unidal.cat.report.internals.RecentReportProvider</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.cat.report.spi.remote.RemoteStub</role>
-				</requirement>
-				<requirement>
-					<role>org.unidal.cat.report.ReportConfiguration</role>
-				</requirement>
-			</requirements>
+			<role>org.unidal.cat.spi.analysis.MessageRoutingStrategy</role>
+			<role-hint>roundrobin</role-hint>
+			<implementation>org.unidal.cat.plugin.routing.RoundRobinStrategy</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.internals.ReportProvider</role>
-			<role-hint>historical</role-hint>
-			<implementation>org.unidal.cat.report.internals.HistoricalReportProvider</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.cat.report.internals.ReportStorage</role>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
-			<role>org.unidal.cat.report.internals.ReportStorage</role>
-			<implementation>org.unidal.cat.report.internals.DefaultReportStorage</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.cat.report.ReportConfiguration</role>
-				</requirement>
-				<requirement>
-					<role>org.unidal.cat.report.internals.ReportStorage</role>
-					<role-hint>mysql</role-hint>
-					<field-name>m_mysql</field-name>
-				</requirement>
-				<requirement>
-					<role>org.unidal.cat.report.internals.ReportStorage</role>
-					<role-hint>file</role-hint>
-					<field-name>m_file</field-name>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
-			<role>org.unidal.cat.report.internals.ReportStorage</role>
-			<role-hint>mysql</role-hint>
-			<implementation>org.unidal.cat.report.internals.MysqlReportStorage</implementation>
-			<requirements>
-				<requirement>
-					<role>com.dianping.cat.core.dal.HourlyReportDao</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.core.dal.HourlyReportContentDao</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.core.dal.DailyReportDao</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.core.dal.DailyReportContentDao</role>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
-			<role>org.unidal.cat.report.internals.ReportStorage</role>
-			<role-hint>file</role-hint>
-			<implementation>org.unidal.cat.report.internals.FileReportStorage</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.cat.report.ReportConfiguration</role>
-				</requirement>
-			</requirements>
-		</component>
-		<component>
-			<role>org.unidal.cat.report.spi.ReportManager</role>
+			<role>org.unidal.cat.spi.ReportManager</role>
 			<role-hint>transaction</role-hint>
 			<implementation>org.unidal.cat.plugin.transaction.TransactionReportManager</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.cat.report.internals.ReportProvider</role>
+					<role>org.unidal.cat.spi.report.provider.ReportProvider</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.cat.report.internals.ReportStorage</role>
+					<role>org.unidal.cat.spi.report.storage.ReportStorage</role>
 					<field-name>m_storage</field-name>
 				</requirement>
 				<requirement>
-					<role>org.unidal.cat.report.internals.ReportStorage</role>
+					<role>org.unidal.cat.spi.report.storage.ReportStorage</role>
 					<role-hint>file</role-hint>
 					<field-name>m_fileStorage</field-name>
 				</requirement>
 				<requirement>
-					<role>org.unidal.cat.report.spi.ReportDelegateManager</role>
+					<role>org.unidal.cat.spi.report.internals.ReportDelegateManager</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.cat.report.ReportFilterManager</role>
+					<role>org.unidal.cat.spi.ReportFilterManager</role>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.spi.ReportAggregator</role>
+			<role>org.unidal.cat.spi.report.ReportAggregator</role>
 			<role-hint>transaction</role-hint>
 			<implementation>org.unidal.cat.plugin.transaction.TransactionReportAggregator</implementation>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.spi.ReportDelegate</role>
+			<role>org.unidal.cat.spi.report.ReportDelegate</role>
 			<role-hint>transaction</role-hint>
 			<implementation>org.unidal.cat.plugin.transaction.TransactionReportDelegate</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.cat.report.spi.ReportAggregator</role>
+					<role>org.unidal.cat.spi.report.ReportAggregator</role>
 					<role-hint>transaction</role-hint>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
-			<role>com.dianping.cat.analysis.MessageAnalyzer</role>
+			<role>org.unidal.cat.spi.analysis.MessageAnalyzer</role>
 			<role-hint>transaction</role-hint>
 			<implementation>org.unidal.cat.plugin.transaction.TransactionReportAnalyzer</implementation>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
 			<requirements>
 				<requirement>
-					<role>org.unidal.cat.report.spi.ReportManager</role>
-					<role-hint>transaction</role-hint>
-				</requirement>
-				<requirement>
 					<role>com.dianping.cat.config.server.ServerFilterConfigManager</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.config.server.ServerConfigManager</role>
 				</requirement>
 			</requirements>
 		</component>
@@ -184,7 +96,7 @@
 			<implementation>org.unidal.cat.plugin.transaction.filter.TransactionReportHelper</implementation>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.ReportFilter</role>
+			<role>org.unidal.cat.spi.report.ReportFilter</role>
 			<role-hint>transaction:type</role-hint>
 			<implementation>org.unidal.cat.plugin.transaction.filter.TransactionTypeFilter</implementation>
 			<requirements>
@@ -194,7 +106,7 @@
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.ReportFilter</role>
+			<role>org.unidal.cat.spi.report.ReportFilter</role>
 			<role-hint>transaction:type-graph</role-hint>
 			<implementation>org.unidal.cat.plugin.transaction.filter.TransactionTypeGraphFilter</implementation>
 			<requirements>
@@ -204,7 +116,7 @@
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.ReportFilter</role>
+			<role>org.unidal.cat.spi.report.ReportFilter</role>
 			<role-hint>transaction:name</role-hint>
 			<implementation>org.unidal.cat.plugin.transaction.filter.TransactionNameFilter</implementation>
 			<requirements>
@@ -214,7 +126,7 @@
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.ReportFilter</role>
+			<role>org.unidal.cat.spi.report.ReportFilter</role>
 			<role-hint>transaction:name-graph</role-hint>
 			<implementation>org.unidal.cat.plugin.transaction.filter.TransactionNameGraphFilter</implementation>
 			<requirements>
@@ -224,65 +136,54 @@
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.spi.ReportManager</role>
+			<role>org.unidal.cat.spi.ReportManager</role>
 			<role-hint>event</role-hint>
 			<implementation>org.unidal.cat.plugin.event.EventReportManager</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.cat.report.internals.ReportProvider</role>
+					<role>org.unidal.cat.spi.report.provider.ReportProvider</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.cat.report.internals.ReportStorage</role>
+					<role>org.unidal.cat.spi.report.storage.ReportStorage</role>
 					<field-name>m_storage</field-name>
 				</requirement>
 				<requirement>
-					<role>org.unidal.cat.report.internals.ReportStorage</role>
+					<role>org.unidal.cat.spi.report.storage.ReportStorage</role>
 					<role-hint>file</role-hint>
 					<field-name>m_fileStorage</field-name>
 				</requirement>
 				<requirement>
-					<role>org.unidal.cat.report.spi.ReportDelegateManager</role>
+					<role>org.unidal.cat.spi.report.internals.ReportDelegateManager</role>
 				</requirement>
 				<requirement>
-					<role>org.unidal.cat.report.ReportFilterManager</role>
+					<role>org.unidal.cat.spi.ReportFilterManager</role>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.spi.ReportAggregator</role>
+			<role>org.unidal.cat.spi.report.ReportAggregator</role>
 			<role-hint>event</role-hint>
 			<implementation>org.unidal.cat.plugin.event.EventReportAggregator</implementation>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.spi.ReportDelegate</role>
+			<role>org.unidal.cat.spi.report.ReportDelegate</role>
 			<role-hint>event</role-hint>
 			<implementation>org.unidal.cat.plugin.event.EventReportDelegate</implementation>
 			<requirements>
 				<requirement>
-					<role>org.unidal.cat.report.spi.ReportAggregator</role>
+					<role>org.unidal.cat.spi.report.ReportAggregator</role>
 					<role-hint>event</role-hint>
 				</requirement>
 			</requirements>
 		</component>
 		<component>
-			<role>com.dianping.cat.analysis.MessageAnalyzer</role>
+			<role>org.unidal.cat.spi.analysis.MessageAnalyzer</role>
 			<role-hint>event</role-hint>
 			<implementation>org.unidal.cat.plugin.event.EventReportAnalyzer</implementation>
-			<requirements>
-				<requirement>
-					<role>org.unidal.cat.report.spi.ReportManager</role>
-					<role-hint>event</role-hint>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.config.server.ServerFilterConfigManager</role>
-				</requirement>
-				<requirement>
-					<role>com.dianping.cat.config.server.ServerConfigManager</role>
-				</requirement>
-			</requirements>
+			<instantiation-strategy>per-lookup</instantiation-strategy>
 		</component>
 		<component>
-			<role>org.unidal.cat.report.ReportFilter</role>
+			<role>org.unidal.cat.spi.report.ReportFilter</role>
 			<role-hint>event:report</role-hint>
 			<implementation>org.unidal.cat.plugin.event.filter.EventReportFilter</implementation>
 		</component>
@@ -493,11 +394,13 @@
 					<role>com.dianping.cat.statistic.ServerStatisticManager</role>
 				</requirement>
 				<requirement>
-					<role>com.dianping.cat.config.server.ServerConfigManager</role>
+					<role>org.unidal.cat.message.storage.MessageDumperManager</role>
 				</requirement>
 				<requirement>
-					<role>com.dianping.cat.message.storage.MessageBucketManager</role>
-					<role-hint>local</role-hint>
+					<role>org.unidal.cat.message.storage.MessageFinderManager</role>
+				</requirement>
+				<requirement>
+					<role>com.dianping.cat.config.server.ServerConfigManager</role>
 				</requirement>
 			</requirements>
 		</component>

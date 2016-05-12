@@ -1,5 +1,7 @@
 package com.dianping.cat.analysis;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.codehaus.plexus.logging.Logger;
 import org.unidal.lookup.ContainerHolder;
 import org.unidal.lookup.annotation.Inject;
@@ -20,7 +22,7 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 	@Inject
 	protected ServerConfigManager m_serverConfigManager;
 
-	private long m_extraTime;
+	protected long m_extraTime;
 
 	protected long m_startTime;
 
@@ -30,9 +32,14 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 
 	private long m_errors = 0;
 
-	private volatile boolean m_active = true;
+	private AtomicBoolean m_active = new AtomicBoolean(true);
 
 	protected int m_index;
+
+    @Override
+    public boolean isEligible(MessageTree tree){
+        return true;
+    }
 
 	@Override
 	public void analyze(MessageQueue queue) {
@@ -110,9 +117,7 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 	}
 
 	protected boolean isActive() {
-		synchronized (this) {
-			return m_active;
-		}
+		return m_active.get();
 	}
 
 	protected boolean isLocalMode() {
@@ -130,14 +135,11 @@ public abstract class AbstractMessageAnalyzer<R> extends ContainerHolder impleme
 
 	protected abstract void process(MessageTree tree);
 
-	public void shutdown() {
-		synchronized (this) {
-			m_active = false;
-		}
-	}
-
 	public void setIndex(int index) {
 		m_index = index;
 	}
 
+	public void shutdown() {
+		m_active.set(false);
+	}
 }
